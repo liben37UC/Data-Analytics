@@ -1,9 +1,23 @@
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import confusion_matrix
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import itertools
+
+def plot_confusion_matrix(cm, classes, normalize=False, title='Confusion matrix',cmap=plt.cm.Blues):
+	plt.imshow(cm, interpolation='nearest', cmap=cmap)
+	plt.title(title)
+	plt.colorbar()
+	tick_marks=np.arange(len(classes))
+	plt.xticks(tick_marks,classes,rotation=45)
+	plt.yticks(tick_marks,classes)
+	fmt='.2f' if normalize else 'd'
+	thresh=cm.max()/2
+	for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+		plt.text(j,i, format(cm[i,j], fmt), horizontalalignment="center",color="white" if cm[i,j] > thresh else "black")
 
 #This example is taken from Machine Learning with Python by William Gray
 
@@ -47,7 +61,7 @@ for i,k in enumerate(neighbors):
 	#compute accuracy on test
 	test_accuracy[i]=knn.score(test_data,test_label)
 
-plt.figure(figsize=(10,6))
+plt.figure(1, figsize=(10,6))
 plt.title('KNN accuracy with varying number of neighbors', fontsize=20)
 plt.plot(neighbors, test_accuracy, label='Testing Accuracy')
 plt.plot(neighbors, train_accuracy, label='Training accuracy')
@@ -59,6 +73,25 @@ plt.xticks(fontsize=20)
 plt.yticks(fontsize=20)
 plt.show()
 
+
+#plt.figure(1, figsize=(8,8))
+plt.ylabel('True label', fontsize=10)
+plt.xlabel('Preicted label', fontsize=10)
+plt.tight_layout()
+plt.xticks(fontsize=10)
+plt.yticks(fontsize=10)
+class_names=load_iris().target_names
+
+prediction=knn.predict(test_data)
+cnf_matrix=confusion_matrix(test_label, prediction)
+np.set_printoptions(precision=2)
+#plt.figure(1, figsize=(10,8))
+
+plot_confusion_matrix(cnf_matrix,classes=class_names)
+
+#plt.title('Confusion Matrix', fontsize=30)
+
+plt.show()
 
 
 
